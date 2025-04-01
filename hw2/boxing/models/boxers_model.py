@@ -13,6 +13,18 @@ configure_logger(logger)
 
 @dataclass
 class Boxer:
+    """A class to store a boxer's stats.
+
+    Attributes: 
+        id (int): Unique numerical ID associated with boxer.
+        name (str): The boxer's name.
+        weight (int): The weight of the boxer.
+        height (int): The height of boxer.
+        reach (float): The boxer's reach.
+        age (int): The boxer's age.
+        weight_class (str): The weight class the boxer falls under.
+        
+    """
     id: int
     name: str
     weight: int
@@ -22,6 +34,9 @@ class Boxer:
     weight_class: str = None
 
     def __post_init__(self):
+        """ Determines a boxer's weight class.
+        
+        """
         self.weight_class = get_weight_class(self.weight)  # Automatically assign weight class
 
 
@@ -30,8 +45,8 @@ def create_boxer(name: str, weight: int, height: int, reach: float, age: int) ->
 
     Args:
         name (str): The boxer's name.
-        weight (int): The weight of the boxer measured in pounds.
-        height (int): The height of boxer measured in inches.
+        weight (int): The weight of the boxer.
+        height (int): The height of boxer.
         reach (float): The boxer's reach.
         age (int): The boxer's age.
 
@@ -286,6 +301,7 @@ def get_weight_class(weight: int) -> str:
         logger.warning("Input weight is invalid.")
         raise ValueError(f"Invalid weight: {weight}. Weight must be at least 125.")
 
+    logger.info("Successfully classified weight class")
     return weight_class
 
 
