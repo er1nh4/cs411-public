@@ -29,21 +29,20 @@ def mock_db_cursor(mocker):
     mock_conn = mocker.Mock()
     mock_cursor = mocker.Mock()
 
-    # Mock the connection's cursor
+    # Mock the connection's cursor.
     mock_conn.cursor.return_value = mock_cursor
-    mock_cursor.fetchone.return_value = None  # Default return for queries
+    mock_cursor.fetchone.return_value = None  # Default return for queries.
     mock_cursor.fetchall.return_value = []
     mock_cursor.commit.return_value = None
 
-    # Mock the get_db_connection context manager from sql_utils
+    # Mock the get_db_connection context manager from sql_utils.
     @contextmanager
     def mock_get_db_connection():
         yield mock_conn  # Yield the mocked connection object
 
     mocker.patch("boxing.models.boxers_model.get_db_connection", mock_get_db_connection)
 
-    return mock_cursor  # Return the mock cursor so we can set expectations per test
-
+    return mock_cursor  # Return the mock cursor so we can set expectations per test.
 
 ##################################################
 #   Create boxer test cases                      #
@@ -70,7 +69,6 @@ def test_create_boxer_with_valid_inputs(mock_db_cursor):
 
     assert actual_arguments == expected_arguments, f"The SQL query arguments did not match. Expected {expected_arguments}, got {actual_arguments}."
 
-
 def test_fail_create_boxer_with_invalid_weight():
     """Test to check failure if invalid inputs are provided to create boxer.
 
@@ -79,7 +77,6 @@ def test_fail_create_boxer_with_invalid_weight():
     with pytest.raises(ValueError, match=f"Invalid weight: 118. Must be at least 125."):
         create_boxer("Bobby", 118, 52, 52, 25)
 
-
 def test_fail_create_boxer_with_invalid_height():
     """Test to check failure if invalid inputs are provided to create boxer.
 
@@ -87,7 +84,6 @@ def test_fail_create_boxer_with_invalid_height():
     # Check to see if ValueError and message is raised.
     with pytest.raises(ValueError, match=f"Invalid height: -45. Must be greater than 0."):
         create_boxer("George", 145, -45, 52, 29)
-
 
 def test_fail_create_duplicate_boxer(mock_db_cursor):
     """Test to check failure if boxer cannot be created because name already exists.
@@ -99,11 +95,10 @@ def test_fail_create_duplicate_boxer(mock_db_cursor):
     with pytest.raises(ValueError, match="Boxer with name 'Duke' already exists."):
         create_boxer(name="Duke", weight=198, height= 74, reach=73.5, age= 33)
 
-
-
 ##################################################
 #   Delete boxer test cases                      #
 ##################################################
+
 def test_delete_boxer_with_valid_id(mock_db_cursor):
     """Test to successfully delete boxer using their valid boxer_id.
 
@@ -136,7 +131,6 @@ def test_delete_boxer_with_valid_id(mock_db_cursor):
 
     assert actual_select_args == expected_select_args, f"The SELECT query arguments did not match. Expected {expected_select_args}, got {actual_select_args}."
     assert actual_delete_args == expected_delete_args, f"The UPDATE query arguments did not match. Expected {expected_delete_args}, got {actual_delete_args}."
-
 
 def test_fail_boxer_does_not_exists(mock_db_cursor):
     """Test to check failure if there's no boxer with provided boxer_id.
@@ -171,7 +165,6 @@ def test_get_leaderboard_by_default(mock_db_cursor):
     assert leaderboard[1]['name'] == 'Duke'
     assert leaderboard[1]['wins'] == 6
 
-
 def test_get_leaderboard_by_win_pct(mock_db_cursor):
     """Test to successfully get leaderboard of boxers sorted by win percentage.
     
@@ -189,9 +182,6 @@ def test_get_leaderboard_by_win_pct(mock_db_cursor):
     assert leaderboard[1]['name'] == 'Duke'
     assert leaderboard[1]['win_pct'] == 60.
 
-
-
-
 def test_fail_invalid_sort_by_parameter():
     """Test to check failure when sort_by parameter is invalid.
     
@@ -199,7 +189,6 @@ def test_fail_invalid_sort_by_parameter():
     # Check to see if ValueError and message is raised.
     with pytest.raises(ValueError, match="Invalid sort_by parameter: fights."):
         get_leaderboard("fights")
-
 
 ##################################################
 #   Get boxer by ID test cases                 #
@@ -236,7 +225,6 @@ def test_fail_get_boxer_using_invalid_id(mock_db_cursor):
     with pytest.raises(ValueError, match=f"Boxer with ID 7777 not found."):
         get_boxer_by_id(7777)
     
-
 ##################################################
 #   Get boxer by name test cases                 #
 ##################################################
@@ -249,8 +237,6 @@ def test_get_boxer_using_name(mock_db_cursor):
         (1234, "Marco", 180, 72, 71.8, 28, 12, 7, 0.583),
         (5678, "Duke", 184, 71, 72.2, 31, 10, 6, 0.6)
     ]
-
-
 
 def test_fail_get_boxer_using_invalid_name(mock_db_cursor):
     """Test to check failure is boxer with given name does not exist.
@@ -277,7 +263,6 @@ def test_get_weight_class_by_weight(mock_db_cursor):
 
     # Check to see if ValueError and message is raised.
     assert expected_result == actual_result, f"Expected {expected_result}, got {actual_result}."
-
 
 def test_fail_invalid_weight():
     """"Test to check failure if invalid weight is provided.
@@ -316,7 +301,6 @@ def test_update_boxer_stat_after_win(mock_db_cursor):
     expected_arguments = (boxer_id,)
 
     assert actual_arguments == expected_arguments, f"The SQL query arguments did not match. Expected {expected_arguments}, got {actual_arguments}."
-
 
 def test_fail_invalid_fight_result():
     """Test to check failure if invalid result is provided to update a boxer's stats.
