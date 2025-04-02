@@ -318,7 +318,6 @@ def test_update_boxer_stat_after_win(mock_db_cursor):
     assert actual_arguments == expected_arguments, f"The SQL query arguments did not match. Expected {expected_arguments}, got {actual_arguments}."
 
 
-
 def test_fail_invalid_fight_result():
     """Test to check failure if invalid result is provided to update a boxer's stats.
 
