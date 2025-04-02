@@ -79,7 +79,8 @@ def create_boxer(name: str, weight: int, height: int, reach: float, age: int) ->
             # Check if the boxer already exists (name must be unique)
             cursor.execute("SELECT 1 FROM boxers WHERE name = ?", (name,))
             if cursor.fetchone():
-                raise ValueError(f"Boxer with name '{name}' already exists")
+                logger.warning("Invalid name: boxer already exists.")
+                raise ValueError(f"Boxer with name '{name}' already exists.")
 
             cursor.execute("""
                 INSERT INTO boxers (name, weight, height, reach, age)
@@ -92,7 +93,7 @@ def create_boxer(name: str, weight: int, height: int, reach: float, age: int) ->
 
     except sqlite3.IntegrityError:
         logger.error("Boxer already exists.")
-        raise ValueError(f"Boxer with name '{name}' already exists")
+        raise ValueError(f"Boxer with name '{name}' already exists.")
 
     except sqlite3.Error as e:
         logger.error(f"Database error when creating boxer: {e}")
@@ -110,6 +111,8 @@ def delete_boxer(boxer_id: int) -> None:
         sqlite3.Error: Any other database error.
 
     """
+    logger.info("Request received to delete boxer.")
+
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
@@ -144,6 +147,7 @@ def get_leaderboard(sort_by: str = "wins") -> List[dict[str, Any]]:
         sqlite3.Error: If any other database error occurs.
 
     """
+    logger.info(f"Request received to return leaderboard sorted by {sort_by}.")
 
     query = """
         SELECT id, name, weight, height, reach, age, fights, wins,
@@ -158,12 +162,12 @@ def get_leaderboard(sort_by: str = "wins") -> List[dict[str, Any]]:
         query += " ORDER BY wins DESC"
     else:
         logger.warning("Sort_by parameter is invalid.")
-        raise ValueError(f"Invalid sort_by parameter: {sort_by}")
+        raise ValueError(f"Invalid sort_by parameter: {sort_by}.")
 
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            logger.info(f"Attempting to create leaderboard of boxers sorted by {sort_by}")
+            logger.info(f"Attempting to create leaderboard of boxers sorted by {sort_by}.")
             cursor.execute(query)
             rows = cursor.fetchall()       
 
@@ -205,6 +209,8 @@ def get_boxer_by_id(boxer_id: int) -> Boxer:
         sqlite3.Error: If any other database error occurs.
 
     """
+    logger.info(f"Request received to retrieve boxer with ID {boxer_id}")
+
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
@@ -247,6 +253,7 @@ def get_boxer_by_name(boxer_name: str) -> Boxer:
         sqlite3.Error: If any other database error occurs.
     
     """
+    logger.info(f"Request received to retrive boxer with name {boxer_name}")
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
@@ -321,7 +328,8 @@ def update_boxer_stats(boxer_id: int, result: str) -> None:
     if result not in {'win', 'loss'}:
         logger.warning("Result is invalid")
         raise ValueError(f"Invalid result: {result}. Expected 'win' or 'loss'.")
-
+    
+    logger.info("Request received to update a boxer's stats.")
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
