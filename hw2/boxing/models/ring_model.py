@@ -19,9 +19,8 @@ class RingModel:
 
     """
     def __init__(self):
-        """ Initializes an empty ring.
-
-        """
+        """ Initializes a new empty ring."""
+        logger.info("Initialzing a new ring.")
         self.ring: List[Boxer] = []
 
     def fight(self) -> str:
@@ -68,7 +67,7 @@ class RingModel:
         update_boxer_stats(loser.id, 'loss')
 
         self.clear_ring()
-        logger.info("Successfully finished fight.")
+        logger.info("Successfully finished fight and cleared ring.")
 
         return winner.name
 
@@ -135,5 +134,5 @@ class RingModel:
         age_modifier = -1 if boxer.age < 25 else (-2 if boxer.age > 35 else 0)
         skill = (boxer.weight * len(boxer.name)) + (boxer.reach / 10) + age_modifier
         logger.info("Successfully determined fighting skill of boxer.")
-        
+
         return skill
